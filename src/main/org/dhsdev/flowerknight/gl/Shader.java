@@ -201,5 +201,4 @@ public final class Shader {
         }
         Logger.log("All shaders successfully created", Severity.DEBUG);
     }
-
 }
