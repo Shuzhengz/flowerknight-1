@@ -1,6 +1,7 @@
 package org.dhsdev.flowerknight;
 
 import org.dhsdev.flowerknight.gl.Renderable;
+import org.dhsdev.flowerknight.gl.TextureAtlas;
 import org.dhsdev.flowerknight.gl.comp.Label;
 import org.dhsdev.flowerknight.game.Camera;
 import org.dhsdev.flowerknight.game.GameObject;
@@ -18,6 +19,9 @@ import static org.lwjgl.opengl.GL33.*;
  * @author adamhutchings
  */
 public final class FlowerKnight {
+
+    // MSAA Sample Size
+    private static final int SAMPLES = 64;
 
     private FlowerKnight() {
         throw new IllegalStateException("FlowerKnight Class");
@@ -47,7 +51,7 @@ public final class FlowerKnight {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         }
 
-        window = new Window();
+        window = new Window(SAMPLES);
 
         Shader.init();
 
@@ -55,7 +59,9 @@ public final class FlowerKnight {
 
         Renderable.renderables.add(new Label("Test", "Test Text", 0.4f,0.4f, 0f, 0f));
 
-        Shader.SPOTLIGHT_SHADER.registerUniform("time");
+        Shader.getSpotlightShader().registerUniform("time");
+
+        TextureAtlas.loadAllTextures();
 
     }
 
@@ -68,8 +74,8 @@ public final class FlowerKnight {
         // While it's open, clear screen and check for events.
         while (window.isOpen()) {
 
-            Shader.SPOTLIGHT_SHADER.bind();
-            Shader.SPOTLIGHT_SHADER.setUniform("time", (float) glfwGetTime());
+            Shader.getSpotlightShader().bind();
+            Shader.getSpotlightShader().setUniform("time", (float) glfwGetTime());
 
             Camera.updateShaders();
 
@@ -104,6 +110,8 @@ public final class FlowerKnight {
         // Not necessary, because the OS will delete everything anyway,
         // but still good practice.
         window.delete();
+
+        TextureAtlas.delete();
 
         glfwTerminate();
     }
